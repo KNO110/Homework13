@@ -1,0 +1,64 @@
+////Powered by Ak1ne
+///Изменение цвета фона по таймеру
+
+using System;
+using System.Windows.Forms;
+
+namespace SmoothColorChange
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            MainForm mainForm = new MainForm();
+
+            Application.Run(mainForm);
+        }
+    }
+
+    public partial class MainForm : Form
+    {
+        private System.Windows.Forms.Timer colorChangeTimer;
+        private Color[] colors = { Color.Black, Color.Red, Color.Yellow, Color.Green, Color.Blue, Color.Cyan, Color.Magenta, Color.White };
+
+        private int currentClrIndex = 0;
+
+        public MainForm()
+        {
+            colorChangeTimer = new System.Windows.Forms.Timer();
+            colorChangeTimer.Interval = 1000; ///// Интервал в миллисекундах, ну типо 1000 единиц == одна секунда
+            colorChangeTimer.Tick += CLChange_Time_tick;
+
+            // запууск
+            colorChangeTimer.Start();
+        }
+
+        private void CLChange_Time_tick(object sender, EventArgs e)
+        {
+            int nextClr = (currentClrIndex + 1) % colors.Length;
+            Color startColor = colors[currentClrIndex];
+            Color endColor = colors[nextClr];
+
+            double step = 0.05;
+
+            int newRed = (int)(startColor.R + (endColor.R - startColor.R) * step);              ///Вычисляем новый цвет, ну чтоб не повторялось
+            int newGreen = (int)(startColor.G + (endColor.G - startColor.G) * step);
+            int newBlue = (int)(startColor.B + (endColor.B - startColor.B) * step);
+
+            this.BackColor = Color.FromArgb(newRed, newGreen, newBlue);         //Берём новий цвет
+
+            currentClrIndex = nextClr;     ///switch на след. цвет
+        }
+
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.Clear(this.BackColor);           ////Обновляет наш цвет на фоне
+        }
+    }
+}
+
+
+///Powered by Ak1ne
